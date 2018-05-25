@@ -112,7 +112,7 @@ void hdc1010::readBytes(uint8_t * buf , uint8_t n )
 	return ;
 }
 
-static void hdc1010::sleep(uint32_t ms)
+void hdc1010::sleep(uint32_t ms)
 {
 	while(ms--)
 		usleep(1000);
