@@ -4,11 +4,18 @@ hdc1010::hdc1010() {
 	return ;
 }
 
+hdc1010::~hdc1010()
+{
+	writeData(CONFIGURATION);
+
+	close(i2cdevbus);
+}
 
 
-bool hdc1010::begin ( uint8_t address )
+bool hdc1010::begin ( uint8_t address , hdc1010_mode flags = { 0 , 0 , 0 , 0 , 0 , 0 , 0 } )
 {
 	_address = address ;
+	_flags = flags ;
 	
 	i2cdevbus = open(I2C_FILE, O_RDWR) ;
 
@@ -26,7 +33,7 @@ bool hdc1010::begin ( uint8_t address )
 
 	writeData(CONFIGURATION) ; //write to the configuration register
 	writeData(0x00) ; //rawData
-	writeData(0x00) ; //flags
+	writeData(_flags) ; //flags
 
 	/* config: default.
 	Heater: Off
@@ -62,7 +69,7 @@ hdc1010_regs hdc1010::readReg() {
 void hdc1010::writeReg(hdc1010_regs reg) {
 	writeData(CONFIGURATION);
 	writeData(reg.rawData);
-	writeData(0x00);
+	writeData(reg.flags);
 	usleep(20000);
 }
 
@@ -105,5 +112,12 @@ void hdc1010::writeData(uint8_t val)
 void hdc1010::readBytes(uint8_t * buf , uint8_t n )
 {
 	read(i2cdevbus,buf,n) ;
+	return ;
+}
+
+static void hdc1010::sleep(uint32_t ms)
+{
+	while(ms--)
+		usleep(1000);
 	return ;
 }
