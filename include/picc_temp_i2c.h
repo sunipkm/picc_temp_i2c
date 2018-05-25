@@ -65,7 +65,7 @@ public:
 	float readT();
 	float readH();
 
-	static void sleep() ;
+	static void sleep(uint32_t) ;
 
 
 private:
