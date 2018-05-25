@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
 #include <errno.h>
+#include <stdint.h>
 
 //HDC1010, big-endian device
 

@@ -1,4 +1,6 @@
 #include <picc_temp_i2c.h>
+#include <iostream>
+using namespace std ;
 
 int main ( void )
 {

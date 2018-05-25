@@ -53,13 +53,13 @@ uint16_t hdc1010::readMfId() {
 	return readData(MANUFACTURER_ID);
 }
 
-hdc1010_regs hdc1010::readRegister() {
+hdc1010_regs hdc1010::readReg() {
 	hdc1010_Registers reg;
 	reg.rawData = (readData(CONFIGURATION) >> 8);
 	return reg;
 }
 
-void hdc1010::writeRegister(hdc1010_regs reg) {
+void hdc1010::writeReg(hdc1010_regs reg) {
 	writeData(CONFIGURATION);
 	writeData(reg.rawData);
 	writeData(0x00);
@@ -67,10 +67,10 @@ void hdc1010::writeRegister(hdc1010_regs reg) {
 }
 
 void hdc1010::heatUp(uint8_t seconds) {
-	hdc1010_regs reg = readRegister();
+	hdc1010_regs reg = readReg();
 	reg.Heater = 1;
 	reg.ModeOfAcquisition = 1;
-	writeRegister(reg);
+	writeReg(reg);
 
 	uint8_t buf[4];
 	for (int i = 1; i < (seconds*66); i++) {
@@ -80,7 +80,7 @@ void hdc1010::heatUp(uint8_t seconds) {
 	}
 	reg.Heater = 0;
 	reg.ModeOfAcquisition = 0;
-	writeRegister(reg);
+	writeReg(reg);
 }
 
 uint16_t hdc1010::readDevId() {
