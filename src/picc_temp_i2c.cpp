@@ -90,10 +90,9 @@ uint16_t hdc1010::readDevId() {
 uint16_t hdc1010::readData(uint8_t pointer)
 {
 	writeData(pointer) ;
-	uint8_t buf1 , buf0 ;
-	read ( i2cdevbus , &buf1 , 1 ) ;
-	read ( i2cdevbus , &buf0 , 1 ) ;
-	return (buf0 << 8 | buf1) ;
+	uint8_t buf[2] ;
+	read ( i2cdevbus , buf , 2 ) ;
+	return (buf[0] << 8 | buf[1]) ;
 }
 
 void hdc1010::writeData(uint8_t val)
