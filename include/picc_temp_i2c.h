@@ -16,7 +16,7 @@ extern "C" {
 #define PICC_TEMP_I2C
 
 #ifndef I2C_FILE
-#define I2C_FILE "/dev/i2c-1"
+#define I2C_FILE "/dev/i2c-1" //for arduino
 #endif
 
 #ifndef I2C_ADDR
@@ -35,7 +35,9 @@ typedef enum { //registers available
 	SERIAL_ID_LAST = 0xFD,
 } hdc1010_ptrs ;
 
-typedef struct {
+typedef union {
+	uint8_t rawData ;
+	struct {
 		uint8_t HumidityMeasurementResolution : 2; //8,9
 		uint8_t TemperatureMeasurementResolution : 1; //10
 		uint8_t BatteryStatus : 1; //11
@@ -43,17 +45,13 @@ typedef struct {
 		uint8_t Heater : 1; //13
 		uint8_t ReservedAgain : 1; //14
 		uint8_t SoftwareReset : 1; //15
-} hdc1010_mode ;
-
-typedef union {
-	uint8_t rawData ;
-	hdc1010_mode flags ;
+	} ;	
 } hdc1010_regs ;
 
 class hdc1010 {
 public:
 	hdc1010();
-
+	~hdc1010();
 	bool begin(uint8_t address);
 	
 	uint16_t readMfId(); // 0x5449 ID of Texas Instruments
@@ -67,6 +65,8 @@ public:
 	float readT();
 	float readH();
 
+	static void sleep() ;
+
 
 private:
 	uint8_t _address;
@@ -75,7 +75,6 @@ private:
 	void readBytes(uint8_t * buf , uint8_t n ) ;
 
 	int i2cdevbus ;
-	hdc1010_mode _flags ;
 };
 
 
