@@ -17,8 +17,6 @@
 #define I2C_ADDR 0x40
 #endif
 
-#define TRUE 1
-#define FALSE 0
 
 typedef enum { //registers available
 	TEMPERATURE = 0x00,
