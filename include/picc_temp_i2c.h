@@ -1,10 +1,15 @@
+extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
 #include <errno.h>
 #include <stdint.h>
-
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/ioctl.h>
+}
 //HDC1010, big-endian device
 
 #ifndef PICC_TEMP_I2C
@@ -12,6 +17,7 @@
 
 #ifndef I2C_FILE
 #define I2C_FILE "/dev/i2c-1"
+#endif
 
 #ifndef I2C_ADDR
 #define I2C_ADDR 0x40
@@ -47,11 +53,12 @@ public:
 	hdc1010();
 
 	bool begin(uint8_t address);
+	
 	uint16_t readMfId(); // 0x5449 ID of Texas Instruments
 	uint16_t readDevId(); // 0x1000 ID of the device
 
-	HDC1010_Registers readReg();	
-	void writeReg(HDC1010_Registers reg);
+	hdc1010_regs readReg();	
+	void writeReg(hdc1010_regs reg);
 
 	void heatUp(uint8_t seconds);
 

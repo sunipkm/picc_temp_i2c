@@ -41,12 +41,12 @@ bool hdc1010::begin ( uint8_t address )
 float hdc1010::readT()
 {
 	uint16_t rawT = readData(TEMPERATURE);
-	return (rawT/PICC_POW16) * 165 - 40 ;
+	return (1.0*rawT/PICC_POW16) * 165 - 40 ;
 }
 
 float hdc1010::readH() {
 	uint16_t rawH = readData(HUMIDITY);
-	return (rawH / PICC_POW16) * 100;
+	return (1.0*rawH / PICC_POW16) * 100;
 }
 
 uint16_t hdc1010::readMfId() {
@@ -54,7 +54,7 @@ uint16_t hdc1010::readMfId() {
 }
 
 hdc1010_regs hdc1010::readReg() {
-	hdc1010_Registers reg;
+	hdc1010_regs reg;
 	reg.rawData = (readData(CONFIGURATION) >> 8);
 	return reg;
 }
@@ -63,7 +63,7 @@ void hdc1010::writeReg(hdc1010_regs reg) {
 	writeData(CONFIGURATION);
 	writeData(reg.rawData);
 	writeData(0x00);
-	usleep(10000);
+	usleep(20000);
 }
 
 void hdc1010::heatUp(uint8_t seconds) {
@@ -75,7 +75,7 @@ void hdc1010::heatUp(uint8_t seconds) {
 	uint8_t buf[4];
 	for (int i = 1; i < (seconds*66); i++) {
 		writeData(0x00);
-		delay(20000);
+		usleep(20000);
 		readBytes(buf,4) ;
 	}
 	reg.Heater = 0;
@@ -93,14 +93,14 @@ uint16_t hdc1010::readData(uint8_t pointer)
 	uint8_t buf1 , buf0 ;
 	read ( i2cdevbus , &buf1 , 1 ) ;
 	read ( i2cdevbus , &buf0 , 1 ) ;
-	return buf1 << 8 | buf0 ;
+	return (buf0 << 8 | buf1) ;
 }
 
 void hdc1010::writeData(uint8_t val)
 {
 	uint8_t buf = val ;
 	write ( i2cdevbus , &buf , 1 ) ;
-	usleep ( 10000 ) ; //wait 10ms before release to give time for response
+	usleep ( 20000 ) ; //wait 20ms before release to give time for response
 }
 
 void hdc1010::readBytes(uint8_t * buf , uint8_t n )
