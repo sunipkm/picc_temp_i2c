@@ -1,24 +1,13 @@
 #include <picc_temp_i2c.h>
 #include <iostream>
 #include <iomanip>
-<<<<<<< HEAD
-=======
-
->>>>>>> fd6c6f643c366fd355b54c0aab7eeeb6c80b45d2
 using namespace std ;
 
 int main ( void )
 {
-<<<<<<< HEAD
 	hdc1010 * dev1 , * dev2 ;
 	dev1 = new hdc1010 ; dev2 = new hdc1010 ;
 	dev1 -> begin(0x41) ; dev2 -> begin(0x43) ;
-=======
-	hdc1010 dev1 , dev2 ;
-	dev1.begin(0x41) ; dev2.begin(0x43) ; //two devices
-
-	cout << fixed << setprecision(3) ;
->>>>>>> fd6c6f643c366fd355b54c0aab7eeeb6c80b45d2
 
 	cout << fixed ;
 	cout <<  setprecision(3);
@@ -27,22 +16,14 @@ int main ( void )
 	cout << "Mf ID Dev2: 0x" << hex << dev2 -> readMfId()  << endl ;
 	uint64_t time = 0 ;
 	while(true)
-<<<<<<< HEAD
 	{
 		cout << "At " << dec << time << " seconds:" << endl ;
 		cout << "Temp Dev1: " << dev1->readT() << " C" << endl ;
 		cout << "Temp Dev2: " << dev2->readT() << " C" << endl ;
-=======
-	{	
-		cout << "At " << dec << ++time << " seconds:" << endl ;
-		cout << "Temp Dev1: " << dev1.readT() << " C" << endl ;
-		cout << "Temp Dev2: " << dev2.readT() << " C" << endl ;
->>>>>>> fd6c6f643c366fd355b54c0aab7eeeb6c80b45d2
 		cout << endl ;
 		cout << "RH Dev1: " << dev1->readH() << " %" << endl ;
 		cout << "RH Dev2: " << dev2->readH() << " %" << endl ;
 		cout << endl ;
-<<<<<<< HEAD
 		time = time + 10 ;
 		if ( time > 20 )
 			break ;
@@ -84,16 +65,6 @@ int main ( void )
 		cout << hex << "Raw: 0x" << val << endl ;
 		cout << endl ; cout << endl ; cout << endl ; cout << endl ;
 		hdc1010::sleep(10000) ;
-=======
-		hdc1010::sleep(1000) ; //spit out numbers in 1 second intervals
-		cout << "x1b[A" ;
-		cout << "x1b[A" ;
-		cout << "x1b[A" ;
-		cout << "x1b[A" ;
-		cout << "x1b[A" ;
-		cout << "x1b[A" ;
-		cout << "x1b[A" ;
->>>>>>> fd6c6f643c366fd355b54c0aab7eeeb6c80b45d2
 	}
 	dev1->acquisition_mode(true);
 	delete dev1 ; 
