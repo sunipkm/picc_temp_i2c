@@ -1,11 +1,22 @@
 #include <picc_temp_i2c.h>
 
+
+int hdc1010::numDev = 0 ;
+
 hdc1010::hdc1010() {
+	numDev++ ;
 	return ;
 }
 
 hdc1010::~hdc1010()
 {
+	#ifdef HDC1010_DEBUG
+	fprintf(stderr,"%s : %d : Closing device %x.\n" , __FILE__ , __LINE__ , _address) ;
+	fprintf(stderr,"%s : %d : Device %x Device Bus: %x.\n" ,__FILE__,__LINE__,_address,i2cdevbus);
+	#endif
+	
+	numDev-- ;	
+	
 	close(i2cdevbus);
 }
 
@@ -18,13 +29,17 @@ bool hdc1010::begin ( uint8_t address )
 
 	if ( i2cdevbus < 0 )
 	{
-		printf ( "FILE %s Line %d: Error opening device %s, %s.\n" , __FILE__ , __LINE__ , I2C_FILE , strerror ( errno ) ) ;
+		#ifdef HDC1010_DEBUG
+		fprintf ( stderr,"FILE %s Line %d: Error opening device %s, %s.\n" , __FILE__ , __LINE__ , I2C_FILE , strerror ( errno ) ) ;
+		#endif
 		return false ;
 	}
 
 	if ( ioctl ( i2cdevbus , I2C_SLAVE, address ) < 0 ) 
 	{
-		printf ( "FILE %s Line %d: ioctl error: %s\n", __FILE__ , __LINE__ , strerror(errno) ) ;
+		#ifdef HDC1010_DEBUG
+		fprintf ( stderr,"FILE %s Line %d: ioctl error: %s\n", __FILE__ , __LINE__ , strerror(errno) ) ;
+		#endif
 		return false ;
 	}
 
@@ -103,7 +118,7 @@ void hdc1010::writeData(uint8_t val)
 {
 	uint8_t buf = val ;
 	write ( i2cdevbus , &buf , 1 ) ;
-	usleep ( 20000 ) ; //wait 20ms before release to give time for response
+	usleep ( 30000 ) ; //wait 20ms before release to give time for response
 }
 
 void hdc1010::readBytes(uint8_t * buf , uint8_t n )
@@ -117,4 +132,37 @@ void hdc1010::sleep(uint32_t ms)
 	while(ms--)
 		usleep(1000);
 	return ;
+}
+
+void hdc1010::acquisition_mode(bool state)
+{
+    if ( state )
+    {
+        hdc1010_regs reg = readReg();
+        reg.Heater = 0 ; //just making sure
+        reg.ModeOfAcquisition = 0 ; //non-simultaneous
+        writeReg(reg) ;
+        return ;
+    }
+    else
+    {
+        hdc1010_regs reg = readReg();
+        reg.Heater = 0 ; //just making sure
+        reg.ModeOfAcquisition = 1 ; //simultaneous
+        writeReg(reg) ;
+    }
+    return ;
+}
+
+uint32_t hdc1010::getTRH() //High word: T, Low word: RH
+{
+    uint32_t result ;
+    uint8_t buf[4];
+    writeData(0x00);
+    usleep(PICC_TIME_USEC);
+    readBytes(buf,4) ;
+    //encoding into 32bit word
+    result = ((uint32_t)buf[0]<<24)|((uint32_t)buf[1]<<16)|((uint32_t)buf[2]<<8)|buf[3] ;
+    
+    return result ;
 }

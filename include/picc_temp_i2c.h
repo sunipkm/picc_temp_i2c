@@ -60,13 +60,17 @@ public:
 	hdc1010_regs readReg();	
 	void writeReg(hdc1010_regs reg);
 
+   	void acquisition_mode(bool) ; //true for separate measure, false for simultaneous
+   	uint32_t getTRH() ; //return 4 bytes in 32bit int format, Temp H|L, Humid H|L.
+	
 	void heatUp(uint8_t seconds);
 
 	float readT();
 	float readH();
 
 	static void sleep(uint32_t) ;
-
+	
+	static int numDev ;
 
 private:
 	uint8_t _address;
@@ -80,6 +84,12 @@ private:
 
 const double PICC_POW16 = 65536.0 ;
 
+#define PICC_TIME_USEC 30000
 
+#define PICC_CONVERT_T(x,y) ((((uint16_t)x<<8|y)*1.0/65536.0)*165-40)
+#define PICC_CONVERT_H(x,y) ((((uint16_t)x<<8|y)*1.0/65536.0)*100)
+
+#define PICC_WORD_T(x) ((x*1.0/65536.0)*165-40)
+#define PICC_WORD_RH(x) (x*100./65536.)
 
 #endif
