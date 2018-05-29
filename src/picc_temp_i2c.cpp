@@ -47,6 +47,8 @@ bool hdc1010::begin ( uint8_t address )
 	writeData(0x00) ; //rawData
 	writeData(0x00) ; //flags
 
+	_mode = 0b00 ;
+
 	/* config: default.
 	Heater: Off
 	Mode: T or RH
@@ -59,12 +61,48 @@ bool hdc1010::begin ( uint8_t address )
 
 float hdc1010::readT()
 {
-	uint16_t rawT = readData(TEMPERATURE);
+	uint16_t rawT ;
+	if ( _mode ) //simultaneous
+	{
+		if ( _trh == 0b01 || _trh == 0b00 ) //if unset or temperature has been read before
+			getTRH() ; //make measurement because temperature data not available anymore
+		rawT = (uint16_t)(_TRH_BUF>>16) ;
+		if ( _trh == 0b11)
+		{
+			_trh = 0b01 ; //temperature has been read
+		}
+		if ( _trh == 0b10 ) //if humidity has been read set both to 0
+		{
+			_trh == 0b00 ;
+			_TRH_BUF = 0x0000000 ;
+		}
+	}
+	else
+	{
+		rawT = readData(TEMPERATURE) ;
+	}
 	return (1.0*rawT/PICC_POW16) * 165 - 40 ;
 }
 
 float hdc1010::readH() {
-	uint16_t rawH = readData(HUMIDITY);
+	uint16_t rawH ;
+
+	if ( _mode ) //simultaneous
+	{
+		if ( _trh == 0b10 || _trh == 0b00 ) //if humidity unavailable
+			getTRH() ; //try to make measurement
+		rawH = (uint16_t)(_TRH_BUF) ;
+		if ( _trh == 0b11 )
+			_trh = 0b10 ; //humidity has been read
+		if ( _trh == 0b01 ) //if temp was read before, set flag to 00
+		{
+			_trh == 0b00 ;
+			//also clear the buffer
+			_TRH_BUF = 0x0000000 ;
+		}
+	}
+	else
+		rawH = readData(HUMIDITY) ;
 	return (1.0*rawH / PICC_POW16) * 100;
 }
 
@@ -82,7 +120,7 @@ void hdc1010::writeReg(hdc1010_regs reg) {
 	writeData(CONFIGURATION);
 	writeData(reg.rawData);
 	writeData(0x00);
-	usleep(20000);
+	usleep(PICC_TIME_USEC);
 }
 
 void hdc1010::heatUp(uint8_t seconds) {
@@ -93,7 +131,7 @@ void hdc1010::heatUp(uint8_t seconds) {
 
 	uint8_t buf[4];
 	for (int i = 1; i < (seconds*66); i++) {
-		writeData(0x00);
+		writeData(TEMPERATURE);
 		usleep(20000);
 		readBytes(buf,4) ;
 	}
@@ -118,7 +156,7 @@ void hdc1010::writeData(uint8_t val)
 {
 	uint8_t buf = val ;
 	write ( i2cdevbus , &buf , 1 ) ;
-	usleep ( 30000 ) ; //wait 20ms before release to give time for response
+	usleep ( PICC_TIME_USEC ) ; //wait 20ms before release to give time for response
 }
 
 void hdc1010::readBytes(uint8_t * buf , uint8_t n )
@@ -142,6 +180,7 @@ void hdc1010::acquisition_mode(bool state)
         reg.Heater = 0 ; //just making sure
         reg.ModeOfAcquisition = 0 ; //non-simultaneous
         writeReg(reg) ;
+        _mode = 0 ;
         return ;
     }
     else
@@ -150,19 +189,27 @@ void hdc1010::acquisition_mode(bool state)
         reg.Heater = 0 ; //just making sure
         reg.ModeOfAcquisition = 1 ; //simultaneous
         writeReg(reg) ;
+        _mode = 1 ;
+        return ;
     }
     return ;
 }
 
 uint32_t hdc1010::getTRH() //High word: T, Low word: RH
 {
-    uint32_t result ;
-    uint8_t buf[4];
-    writeData(0x00);
-    usleep(PICC_TIME_USEC);
-    readBytes(buf,4) ;
-    //encoding into 32bit word
-    result = ((uint32_t)buf[0]<<24)|((uint32_t)buf[1]<<16)|((uint32_t)buf[2]<<8)|buf[3] ;
-    
+    uint32_t result = 0x0000 ;
+
+    //check flags
+    if ( _mode == 0b1 )
+  	{
+    	uint8_t buf[4];
+    	writeData(0x00);
+    	usleep(PICC_TIME_USEC);
+    	readBytes(buf,4) ;
+    	//encoding into 32bit word
+    	result = ((uint32_t)buf[0]<<24)|((uint32_t)buf[1]<<16)|((uint32_t)buf[2]<<8)|buf[3] ;
+    	_TRH_BUF = result ;
+    	_trh = 0b11 ; //gcc only, both are available for read
+    }
     return result ;
 }

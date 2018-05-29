@@ -59,9 +59,9 @@ int main ( void )
 		cout << hex << "Raw: 0x" << val << endl ;
 		cout << hex << "RH: 0x" << (uint16_t)(val) << endl ;
 		cout << hex << "Raw: 0x" << val << endl ;
-		cout << "T: " << PICC_WORD_T((uint16_t)(val>>16)) << " C" << endl ;
+		cout << "T: " << dev1 -> readT() << " C" << endl ;
 		cout << hex << "Raw: 0x" << val << endl ;
-		cout << "RH: " << PICC_WORD_RH((uint16_t)(val)) << " %" << endl ;
+		cout << "RH: " << dev1 -> readH() << " %" << endl ;
 		cout << hex << "Raw: 0x" << val << endl ;
 		cout << endl ; cout << endl ; cout << endl ; cout << endl ;
 		hdc1010::sleep(10000) ;
