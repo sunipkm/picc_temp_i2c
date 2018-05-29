@@ -8,10 +8,10 @@ LD=ld
 PWD=pwd
 CDR=$(shell pwd)
 
-EDCFLAGS=-O2 -fPIC -Wall -I include/
-CXXFLAGS=-O2 -fPIC -Wall -I include/
+
 LDFLAGS=-shared
-EDCFLAGS:=$(CFLAGS)
+override CXXFLAGS+= -O2 -fPIC -Wall -I include/
+
 EDLDFLAGS:=$(LDFLAGS)
 
 LIBEXT=so
@@ -36,7 +36,6 @@ example/example: $(lib_example)
 	$(CXX) -o $@ -Iinclude/ $(LINKOPTIONS) $(lib_example) -lpicc_i2c_thsensor
 
 %.o: %.c
-	$(ECHO) $(EDCFLAGS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
 install: build/$(TARGETLIB)
