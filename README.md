@@ -12,13 +12,20 @@ On command line execute `git clone https://github.com/sunipkmukherjee/picc_temp_
 # How to build
 
 After cloning the repository, `cd` into the directory and execute `make`.
-This will built the shared library `build/libpicc_i2c_thsensor.so` and the example binary `example/example`. To execute the example binary you can execute `make install` (with `sudo` if you do not have write permission in `/usr/local/lib`) to install the library in `/usr/local/lib` and then fire up the example binary. This will work if you have your `LD_LIBRARY_PATH` variable set to include `/usr/local/lib`. Otherwise, you can execute `export LD_LIBRARY_PATH=$PWD/build:$LD_LIBRARY_PATH` on a BASH shell or `setenv LD_LIBRARY_PATH $PWD/build:$LD_LIBRARY_PATH` on a Corn shell to append the current build path to the shared library file search path, and then execute the example binary.
+This will built the shared library `build/libpicc_i2c_thsensor.so` and the example binary `example/example`. To execute the example binary you can execute `make install` (with `sudo` if you do not have write permission in `/usr/local/lib`) to install the library in `/usr/local/lib` and then fire up the example binary. This will work if you have your `LD_LIBRARY_PATH` variable set to include `/usr/local/lib`. Otherwise, you can execute ```
+export LD_LIBRARY_PATH=$PWD/build:$LD_LIBRARY_PATH``` 
+on a BASH shell or ```
+setenv LD_LIBRARY_PATH $PWD/build:$LD_LIBRARY_PATH```
+on a Corn shell to append the current build path to the shared library file search path, and then execute the example binary.
 
 You can execute `make clean` to delete the built objects, and `make spotless` to restore the directory to the state when it was cloned.
 
 `make uninstall` can be executed to delete the installed shared library file from `/usr/local/lib` if it was installed.
 
-The debug signals can be turned on by specifying the `HDC1010_DEBUG` option during make in `CXXFLAGS` using `make CXXFLAGS=-DHDC1010_DEBUG`.
+The debug signals can be turned on by specifying the `HDC1010_DEBUG` option during make in `CXXFLAGS` using 
+```
+make CXXFLAGS=-DHDC1010_DEBUG
+```
 
 Further, the option `I2C_FILE` can be used to provide the I2C device file name to the library.
 
