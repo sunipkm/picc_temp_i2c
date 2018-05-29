@@ -1,20 +1,32 @@
 # PICTURE-C Temperature Controller on I2C Bus
 
->>>> Begin
+Controller driver for [HDC1010 Temperature and Humidity Sensor from Texas Instruments](http://www.ti.com/product/HDC1010).
+The system is on an I2C bus.
 
-Hi Sunip, 
-I found something for you to do. 
+#
 
-We have these temperature & humidity sensors: 
-https://www.tindie.com/products/closedcube/hdc1010-high-accuracy-humiditytemperature-sensor/
+# How to get
 
-This is the actual sensor chip from TI: 
-http://www.ti.com/product/HDC1010
+On command line execute `git clone https://github.com/sunipkmukherjee/picc_temp_i2c.git`
 
-I left one on your desk. Can you figure out how to use it? 
-It uses an I2C interface. Kuravi said we have a raspberry pi that has I2C. Could you please wire it up and write a test program in C to read it out? 
+# How to build
 
-Thanks, 
-Chris
+After cloning the repository, `cd` into the directory and execute `make`.
+This will built the shared library `build/libpicc_i2c_thsensor.so` and the example binary `example/example`. To execute the example binary you can execute `make install` (with `sudo` if you do not have write permission in `/usr/local/lib`) to install the library in `/usr/local/lib` and then fire up the example binary. This will work if you have your `LD_LIBRARY_PATH` variable set to include `/usr/local/lib`. Otherwise, you can execute `export LD_LIBRARY_PATH=$PWD/build:$LD_LIBRARY_PATH` on a BASH shell or `setenv LD_LIBRARY_PATH $PWD/build:$LD_LIBRARY_PATH` on a Corn shell to append the current build path to the shared library file search path, and then execute the example binary.
 
->>>> End
+You can execute `make clean` to delete the built objects, and `make spotless` to restore the directory to the state when it was cloned.
+
+`make uninstall` can be executed to delete the installed shared library file from `/usr/local/lib` if it was installed.
+
+The debug signals can be turned on by specifying the `HDC1010_DEBUG` option during make in `CXXFLAGS` using `make CXXFLAGS=-DHDC1010_DEBUG`.
+
+Further, the option `I2C_FILE` can be used to provide the I2C device file name to the library.
+
+Note: Since the variable is being passed to the preprocessor through make, it should be done in the following format:
+```make CXXFLAGS="-DI2C_FILE=\\\"/path/to/i2c\\\""```
+This ensures that the string is passed properly to the preprocessor.
+
+
+# Functionalities provided by the library:
+
+
