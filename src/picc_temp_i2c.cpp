@@ -30,7 +30,7 @@ bool hdc1010::begin ( uint8_t address )
 	if ( i2cdevbus < 0 )
 	{
 		#ifdef HDC1010_DEBUG
-		fprintf ( stderr,"FILE %s Line %d: Error opening device %s, %s.\n" , __FILE__ , __LINE__ , I2C_FILE , strerror ( errno ) ) ;
+		fprintf ( stderr,"FILE %s Line %d Function %s: Error opening device %s, %s.\n" , __FILE__ , __LINE__ , __FUNCTION__ , I2C_FILE , strerror ( errno ) ) ;
 		#endif
 		return false ;
 	}
@@ -64,6 +64,9 @@ float hdc1010::readT()
 	uint16_t rawT ;
 	if ( _mode ) //simultaneous
 	{
+		#ifdef HDC1010_DEBUG
+		fprintf(stderr,"FILE %s line %d Function %s: Simultaneous mode, flag: 0x%x\n" , __FILE__ , __LINE__ , __FUNCTION__ , _trh );
+		#endif
 		if ( _trh == 0b01 || _trh == 0b00 ) //if unset or temperature has been read before
 			getTRH() ; //make measurement because temperature data not available anymore
 		rawT = (uint16_t)(_TRH_BUF>>16) ;
@@ -73,7 +76,7 @@ float hdc1010::readT()
 		}
 		if ( _trh == 0b10 ) //if humidity has been read set both to 0
 		{
-			_trh == 0b00 ;
+			_trh = 0b00 ;
 			_TRH_BUF = 0x0000000 ;
 		}
 	}
@@ -89,6 +92,9 @@ float hdc1010::readH() {
 
 	if ( _mode ) //simultaneous
 	{
+		#ifdef HDC1010_DEBUG
+		fprintf(stderr,"FILE %s line %d Function %s: Simultaneous mode, flag: 0x%x\n" , __FILE__ , __LINE__ , __FUNCTION__ , _trh );
+		#endif
 		if ( _trh == 0b10 || _trh == 0b00 ) //if humidity unavailable
 			getTRH() ; //try to make measurement
 		rawH = (uint16_t)(_TRH_BUF) ;
@@ -96,7 +102,7 @@ float hdc1010::readH() {
 			_trh = 0b10 ; //humidity has been read
 		if ( _trh == 0b01 ) //if temp was read before, set flag to 00
 		{
-			_trh == 0b00 ;
+			_trh = 0b00 ;
 			//also clear the buffer
 			_TRH_BUF = 0x0000000 ;
 		}

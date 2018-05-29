@@ -54,15 +54,15 @@ int main ( void )
 		uint32_t val = dev1->getTRH() ;
 		//uint16_t rh = val & 0xffff ;
 		//uint16_t temp = (val>>16) & 0xffff ;
-		cout << hex << "Raw: 0x" << val << endl ;
-		cout << hex << "Temp: 0x" << (uint16_t)(val>>16) << endl ;
-		cout << hex << "Raw: 0x" << val << endl ;
-		cout << hex << "RH: 0x" << (uint16_t)(val) << endl ;
-		cout << hex << "Raw: 0x" << val << endl ;
+		//cout << hex << "Raw: 0x" << val << endl ;
+		//cout << hex << "Temp: 0x" << (uint16_t)(val>>16) << endl ;
+		//cout << hex << "Raw: 0x" << val << endl ;
+		//cout << hex << "RH: 0x" << (uint16_t)(val) << endl ;
+		//cout << hex << "Raw: 0x" << val << endl ;
 		cout << "T: " << dev1 -> readT() << " C" << endl ;
-		cout << hex << "Raw: 0x" << val << endl ;
+		//cout << hex << "Raw: 0x" << val << endl ;
 		cout << "RH: " << dev1 -> readH() << " %" << endl ;
-		cout << hex << "Raw: 0x" << val << endl ;
+		//cout << hex << "Raw: 0x" << val << endl ;
 		cout << endl ; cout << endl ; cout << endl ; cout << endl ;
 		hdc1010::sleep(10000) ;
 	}
