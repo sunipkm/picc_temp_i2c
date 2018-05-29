@@ -29,18 +29,13 @@ bool hdc1010::begin ( uint8_t address )
 
 	if ( i2cdevbus < 0 )
 	{
-		#ifdef HDC1010_DEBUG
 		fprintf ( stderr,"FILE %s Line %d Function %s: Error opening device %s, %s.\n" , __FILE__ , __LINE__ , __FUNCTION__ , I2C_FILE , strerror ( errno ) ) ;
-		#endif
 		return false ;
 	}
 
 	if ( ioctl ( i2cdevbus , I2C_SLAVE, address ) < 0 ) 
 	{
-		#ifdef HDC1010_DEBUG
 		fprintf ( stderr,"FILE %s Line %d: ioctl error: %s\n", __FILE__ , __LINE__ , strerror(errno) ) ;
-		#endif
-		return false ;
 	}
 
 	writeData(CONFIGURATION) ; //write to the configuration register
