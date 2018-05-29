@@ -23,9 +23,9 @@ The debug signals can be turned on by specifying the `HDC1010_DEBUG` option duri
 Further, the option `I2C_FILE` can be used to provide the I2C device file name to the library.
 
 Note: Since the variable is being passed to the preprocessor through make, it should be done in the following format:
-
-```make CXXFLAGS="-DI2C_FILE=\\\"/path/to/i2c\\\""```
-
+```
+make CXXFLAGS="-DI2C_FILE=\\\"/path/to/i2c\\\""
+```
 This ensures that the string is passed properly to the preprocessor.
 
 
