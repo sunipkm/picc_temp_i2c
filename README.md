@@ -42,4 +42,10 @@ This ensures that the string is passed properly to the preprocessor.
 
 # Functionalities provided by the library:
 
+The driver is written in C++, hence each device present can be described by individual objects. The following methods are defined on these objects:
 
+The objects are of the class `hdc1010`.
+
+1. The constructor:
+  The constructor is empty in this case.
+2. `begin()`:
