@@ -47,5 +47,10 @@ The driver is written in C++, hence each device present can be described by indi
 The objects are of the class `hdc1010`.
 
 1. The constructor:
+
   The constructor is empty in this case.
-2. `begin()`:
+  
+2. `begin(address)`:
+
+  This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open.
+  
