@@ -47,7 +47,8 @@ The driver is written in C++, hence each device present can be described by indi
 The objects are of the class `hdc1010`.
   
 1. `begin(unsigned char)`:
-   This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open. After the device is opened, it is by default set to measure temperature and humidity independently. The input address should be 7-bit following I2C bus addressing scheme.
+   This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open. After the device is opened, it is by default set to measure temperature and humidity independently. The input address should be 7-bit following I2C bus addressing scheme.  
+   The macro `I2C_ADDR` can be provided to the compiler through `make` through `CXXFLAGS` to set the base address, which is predefined to be `0x40`. (Testing has been made with two devices `0x41` and `0x43`, other possible device addresses are `0x40` and `0x42`.)
   
 2. `acquisition_mode(bool)`:
    This method sets the acquisition mode of the device. If this method is called with `false` as the input, then it sets the device for simultaneous measurement of temperature and relative humidity. If this method is called with `true` as the input, then it sets the device for independent measurement of temperature and relative humidity. The functions to retrieve the temperature and relative humidity from the device are agnostic to the acquisition method used.
