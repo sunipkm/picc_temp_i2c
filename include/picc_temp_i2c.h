@@ -62,8 +62,6 @@ public:
 	void writeReg(hdc1010_regs reg);
 
    	void acquisition_mode(bool) ; //true for separate measure, false for simultaneous
-   	
-   	uint32_t getTRH() ; //return 4 bytes in 32bit int format, Temp H|L, Humid H|L and also stores it in the internal buffer for access through readT and readH functions. Output can be discarded in that case.
 	
 	void heatUp(uint8_t seconds);
 
@@ -80,6 +78,8 @@ private:
 	uint16_t readData(uint8_t pointer); //read Data from the given register
 	void writeData(uint8_t val) ; //write byte to the device (data/register addr)
 	void readBytes(uint8_t * buf , uint8_t n ) ; //read n bytes from device and store it in buffer
+
+	uint32_t getTRH() ; //return 4 bytes in 32bit int format, Temp H|L, Humid H|L and also stores it in the internal buffer for access through readT and readH functions. Output can be discarded in that case.
 
 	int i2cdevbus ; //i2c bus that has been opened for the device
 
@@ -106,7 +106,9 @@ private:
 
 const double PICC_POW16 = 65536.0 ;
 
+#ifndef PICC_TIME_USEC
 #define PICC_TIME_USEC 30000 //30ms (14bit temp: ~7ms, 14bit RH: ~7ms), with lots of head room.
+#endif
 
 #define PICC_CONVERT_T(x,y) ((((uint16_t)x<<8|y)*1.0/65536.0)*165-40) //higher byte, lower byte
 #define PICC_CONVERT_H(x,y) ((((uint16_t)x<<8|y)*1.0/65536.0)*100)

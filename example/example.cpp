@@ -51,7 +51,7 @@ int main ( void )
 	for ( time = 0 ; time < 20 ; time += 10 )
 	{
 		cout << "At " << dec << time << " seconds:" << endl ;
-		uint32_t val = dev1->getTRH() ;
+		//uint32_t val = dev1->getTRH() ;
 		//uint16_t rh = val & 0xffff ;
 		//uint16_t temp = (val>>16) & 0xffff ;
 		//cout << hex << "Raw: 0x" << val << endl ;
