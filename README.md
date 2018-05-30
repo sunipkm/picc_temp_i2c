@@ -48,9 +48,20 @@ The objects are of the class `hdc1010`.
 
 1. The constructor:
 
-   The constructor is empty in this case.
+   The constructor is empty in this case, and simply creates an instance of the `hdc1010` object.
   
 2. `begin(address)`:
 
-   This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open.
+   This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open. After the device is opened, it is by default set to measure temperature and humidity independently.
   
+3. `acquisition_mode(bool)`:
+
+   This method sets the acquisition mode of the device. If this method is called with `false` as the input, then it sets the device for simultaneous measurement of temperature and relative humidity. If this method is called with `true` as the input, then it sets the device for independent measurement of temperature and relative humidity. The functions to retrieve the temperature and relative humidity from the device are agnostic to the acquisition method used.
+   
+4. `readMfID()`:
+
+   This method returns the manufacturer ID of the device (`0x5449` for Texas Instrument).
+   
+5. `readDevID()`:
+
+   This method returns the address of the device on the I2C bus (should match the address initialized with).
