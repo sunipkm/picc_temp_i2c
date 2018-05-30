@@ -46,24 +46,19 @@ The driver is written in C++, hence each device present can be described by indi
 
 The objects are of the class `hdc1010`.
   
-1. `begin(address)`:
-
-   This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open. After the device is opened, it is by default set to measure temperature and humidity independently.
+1. `begin(unsigned char)`:
+   This method opens the slave device address (e.g. `0x41`) on the I2C bus specified by `I2C_FILE` macro during compilation. Returns `true` on success. This should be tracked in order to obtain reliable information from the device. Returns `false` if the device fails to respond to `ioctl` requests or if the I2C bus fails to open. After the device is opened, it is by default set to measure temperature and humidity independently. The input address should be 7-bit following I2C bus addressing scheme.
   
 2. `acquisition_mode(bool)`:
-
    This method sets the acquisition mode of the device. If this method is called with `false` as the input, then it sets the device for simultaneous measurement of temperature and relative humidity. If this method is called with `true` as the input, then it sets the device for independent measurement of temperature and relative humidity. The functions to retrieve the temperature and relative humidity from the device are agnostic to the acquisition method used.
    
 3. `readMfID()`:
-
    This method returns the manufacturer ID of the device (`0x5449` for Texas Instrument).
    
 4. `readDevID()`:
-
    This method returns the address of the device on the I2C bus (should match the address initialized with).
    
 5. `readReg()`:
-
    This method reads the configuration register (register `0x02`) and returns its contents as `hdc1010_regs` structure. The structure has the following accessible members:
       * `TemperatureMeasurementResolution` (1 bit):
          0 indicates 14 bit resolution, 1 indicates 11 bit resolution.
@@ -77,3 +72,20 @@ The objects are of the class `hdc1010`.
          Turns on an included resistive element to heat up the chip. This is used to get rid of any condensation on the chip or for testing purposes.
       * `SoftwareReset` (1 bit):
          Resets the system to its initial state.
+
+6. `writeReg(hdc1010_regs)`:
+   This method writes an input of the `hdc1010_regs` datatype to the `CONFIGURATION` register.
+   
+7. `heatUp(unsigned char)`:
+   This method takes in a number between 0 and 255, and turns on the resistive heating element for that many seconds.
+   
+8. `readT()`:
+   This method makes a measurement of temperature and returns the value in floating point format.
+   
+9. `readH()`:
+   This method makes a measurement of relative humidity and returns the value in floating point format.
+   
+   
+There is also a function `hdc1010::sleep(unsigned long)` defined, which takes in the number of milliseconds to sleep. This is a wrapper around the LINUX system call `usleep`.
+
+A full precision (14-bit) temperature or relative humidity measurement takes 6.35 ms according to the TI documentation (reference I2C clock 400 kHz). The system sleeps for 30 ms after each measurement is read before reading the output (as the data ready indicator is unused). This should give the system ample time to perform the measurement. The time-lapse between request and read can be altered by providing the value for the macro `PICC_TIME_USEC` (in microseconds) in `CXXFLAGS` during `make`.
